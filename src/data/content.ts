@@ -232,7 +232,7 @@ const projectsPt: readonly Project[] = [
     hash: "a3f9c21",
     title: "orquestração de agentes de IA generativa em produção",
     description:
-      "Arquitetura e implementação de agentes e pipelines com LLMs e SLMs, da concepção à produção — automação de fluxos, observabilidade e participação nas decisões de governança e adoção de IA em aplicações corporativas.",
+      "Arquitetura e implementação de agentes e pipelines com LLMs e SLMs, da concepção à produção. Automação de fluxos, observabilidade e participação nas decisões de governança e adoção de IA em aplicações corporativas.",
     impact:
       "Acelerou a adoção de IA generativa na organização com observabilidade e governança desde o design, permitindo evoluir os sistemas com segurança.",
     stack: ["agents.py", "flows.json", "tracing.ts"],
@@ -248,7 +248,7 @@ const projectsPt: readonly Project[] = [
   },
   {
     hash: "c02b6a5",
-    title: "Poder Monitor — rastreamento de repasses federais",
+    title: "Poder Monitor: rastreamento de repasses federais",
     description:
       "Desenvolvimento fullstack (backend, frontend, scrapers e RPA) do módulo que cruza emendas, repasses e indicadores públicos em múltiplas escalas geográficas, com apoio do Google News Initiative.",
     impact:
@@ -271,7 +271,7 @@ const projectsEn: readonly Project[] = [
     hash: "a3f9c21",
     title: "generative AI agent orchestration in production",
     description:
-      "Architecture and implementation of agents and pipelines with LLMs and SLMs, from design to production — flow automation, observability and a seat in AI governance and adoption decisions for corporate applications.",
+      "Architecture and implementation of agents and pipelines with LLMs and SLMs, from design to production. Flow automation, observability and a seat in AI governance and adoption decisions for corporate applications.",
     impact:
       "Accelerated generative AI adoption across the organization with observability and governance built in from the design phase, letting the systems evolve safely.",
     stack: ["agents.py", "flows.json", "tracing.ts"],
@@ -287,7 +287,7 @@ const projectsEn: readonly Project[] = [
   },
   {
     hash: "c02b6a5",
-    title: "Poder Monitor — tracking federal fund transfers",
+    title: "Poder Monitor: tracking federal fund transfers",
     description:
       "Full-stack development (backend, frontend, scrapers and RPA) of the module that cross-references earmarks, transfers and public indicators across multiple geographic scales, supported by the Google News Initiative.",
     impact:
@@ -314,11 +314,11 @@ export const content: Record<Lang, Content> = {
     location: "Distrito Federal, Brasil",
     footerLocation: "Distrito Federal · Brasil",
     experienceYears: "7+ anos",
-    bio: "Profissional de tecnologia com 7+ anos de experiência em DevSecOps, Engenharia de Software e IA. Projeto e construo soluções escaláveis — de pipelines de dados e arquiteturas cloud-native a agentes e sistemas com LLMs — com segurança desde o desenho.",
+    bio: "Profissional de tecnologia com 7+ anos de experiência em DevSecOps, Engenharia de Software e IA. Projeto e construo soluções escaláveis, de pipelines de dados e arquiteturas cloud-native a agentes e sistemas com LLMs, com segurança desde o desenho.",
     linkedin: "https://www.linkedin.com/in/lucaasgaabriel14/",
-    github: "https://github.com/lucaasgaabriel14",
+    github: "https://github.com/lucaasgaabriel",
     linkedinHandle: "/in/lucaasgaabriel14",
-    githubHandle: "@lucaasgaabriel14",
+    githubHandle: "@lucaasgaabriel",
     stackCategories: stackCategoriesPt,
     focusAreas: focusAreasPt,
     projects: projectsPt,
@@ -333,9 +333,9 @@ export const content: Record<Lang, Content> = {
       whoamiCommand: "whoami --focus",
       stacksHeading: "Stacks",
       stacksSubtitle:
-        "Da primeira linha de código à produção em escala — o que sustenta o que projeto e entrego de ponta a ponta, com segurança em cada camada.",
+        "Da primeira linha de código à produção em escala: o que sustenta o que projeto e entrego de ponta a ponta, com segurança em cada camada.",
       projectsHeading: "Projetos & impacto",
-      projectsSubtitle: "Um recorte do que construí — não só a stack, mas o que ela resolveu.",
+      projectsSubtitle: "Um recorte do que construí: não só a stack, mas o que ela resolveu.",
       filesChanged: "files changed",
       impactLabel: "Impact:",
       contactHeading: "Contato profissional",
@@ -364,11 +364,11 @@ export const content: Record<Lang, Content> = {
     location: "Distrito Federal, Brazil",
     footerLocation: "Distrito Federal · Brazil",
     experienceYears: "7+ years",
-    bio: "Technology professional with 7+ years of experience in DevSecOps, Software Engineering and AI. I design and build scalable solutions — from data pipelines and cloud-native architectures to agents and LLM-based systems — with security from the design phase.",
+    bio: "Technology professional with 7+ years of experience in DevSecOps, Software Engineering and AI. I design and build scalable solutions, from data pipelines and cloud-native architectures to agents and LLM-based systems, with security from the design phase.",
     linkedin: "https://www.linkedin.com/in/lucaasgaabriel14/",
-    github: "https://github.com/lucaasgaabriel14",
+    github: "https://github.com/lucaasgaabriel",
     linkedinHandle: "/in/lucaasgaabriel14",
-    githubHandle: "@lucaasgaabriel14",
+    githubHandle: "@lucaasgaabriel",
     stackCategories: stackCategoriesEn,
     focusAreas: focusAreasEn,
     projects: projectsEn,
@@ -383,9 +383,9 @@ export const content: Record<Lang, Content> = {
       whoamiCommand: "whoami --focus",
       stacksHeading: "Stacks",
       stacksSubtitle:
-        "From the first line of code to production at scale — what backs what I design and ship end to end, with security in every layer.",
+        "From the first line of code to production at scale: what backs what I design and ship end to end, with security in every layer.",
       projectsHeading: "Projects & impact",
-      projectsSubtitle: "A slice of what I've built — not just the stack, but what it solved.",
+      projectsSubtitle: "A slice of what I've built: not just the stack, but what it solved.",
       filesChanged: "files changed",
       impactLabel: "Impact:",
       contactHeading: "Professional contact",
