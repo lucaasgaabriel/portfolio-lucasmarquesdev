@@ -65,9 +65,10 @@ pnpm deploy      # build + deploy para Cloudflare Workers
   preferência de cliente existir.
 - **OpenNext, não `@cloudflare/next-on-pages`** — o site usa Server Actions,
   que o adapter mais antigo da Cloudflare não suporta bem.
-- **CI/CD em dois estágios** — `quality` (lint, typecheck, build) roda em
-  todo push/PR sem precisar de secret; `deploy` só dispara em push para
-  `main` e só depois que `quality` passa.
+- **CI/CD em estágios** — `quality` (lint, typecheck, audit, build) e
+  `secrets-scan` (Gitleaks) rodam em todo push/PR sem precisar de secret;
+  `deploy` só dispara em push para `main` e só depois que os dois passam;
+  `dast` roda depois do deploy, contra o site já publicado.
 
 ## Segurança
 
@@ -87,11 +88,19 @@ pnpm deploy      # build + deploy para Cloudflare Workers
   porque a única consequência de spam é poluir um log; deixaria de ser
   aceitável se o formulário passasse a disparar algo com custo.
 - `scripts/check-secrets.mjs` é um scanner de padrões conhecidos (chaves AWS,
-  tokens, blocos de chave privada), não um gitleaks/trufflehog — sem
-  detecção por entropia, sem varredura de histórico, só roda localmente via
-  git hook.
-- `pnpm audit` não roda no CI hoje (sem vulnerabilidades conhecidas no
-  momento em que isso foi escrito, mas isso só vale para esse instante).
+  tokens, blocos de chave privada) que roda localmente via git hook, sobre os
+  arquivos staged. Em CI, o job `secrets-scan` roda Gitleaks sobre o histórico
+  completo do repositório a cada push/PR — cobertura mais ampla (entropia,
+  regras da comunidade), como camada extra e não substituto do hook local.
+- `pnpm audit --audit-level=high` roda no job `quality` do CI a cada push/PR
+  (sem vulnerabilidades conhecidas no momento em que isso foi escrito, mas
+  isso só vale para esse instante). Dependabot está ativo para atualizações
+  de segurança e para PRs semanais de dependências (`.github/dependabot.yml`).
+- CodeQL (SAST) roda em todo push/PR e semanalmente, com os resultados na aba
+  Security do repositório — não bloqueia o deploy, é uma camada de revisão.
+- OWASP ZAP baseline (DAST) roda depois de cada deploy bem-sucedido, contra
+  `https://lucasgms.dev` — relatório informativo, não bloqueia nada porque o
+  deploy já aconteceu quando ele roda.
 - Sem autenticação, sem banco de dados — a superfície de ataque real é só o
   formulário de contato.
 
