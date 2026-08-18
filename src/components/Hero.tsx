@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { CodeWindow } from "@/components/CodeWindow";
 import { IconRain } from "@/components/IconRain";
 import { MeetMeModal } from "@/components/MeetMeModal";
@@ -14,8 +15,54 @@ const TAG_COLOR: Record<string, string> = {
   SEC: "var(--accent-security)",
 };
 
+const EXPERIENCE_START = new Date(2019, 7, 14);
+
+function formatExperience(yearUnit: string) {
+  const now = new Date();
+  let years = now.getFullYear() - EXPERIENCE_START.getFullYear();
+  let months = now.getMonth() - EXPERIENCE_START.getMonth();
+  let days = now.getDate() - EXPERIENCE_START.getDate();
+  let hours = now.getHours() - EXPERIENCE_START.getHours();
+  let minutes = now.getMinutes() - EXPERIENCE_START.getMinutes();
+  let seconds = now.getSeconds() - EXPERIENCE_START.getSeconds();
+
+  if (seconds < 0) {
+    seconds += 60;
+    minutes -= 1;
+  }
+  if (minutes < 0) {
+    minutes += 60;
+    hours -= 1;
+  }
+  if (hours < 0) {
+    hours += 24;
+    days -= 1;
+  }
+  if (days < 0) {
+    days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    months -= 1;
+  }
+  if (months < 0) {
+    months += 12;
+    years -= 1;
+  }
+
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${years}${yearUnit} ${months}m ${days}d, ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 export function Hero() {
   const { t } = useLanguage();
+  const [experience, setExperience] = useState(() =>
+    typeof window === "undefined" ? "" : formatExperience(t.ui.experienceYearUnit),
+  );
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setExperience(formatExperience(t.ui.experienceYearUnit));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [t.ui.experienceYearUnit]);
 
   return (
     <section className="relative overflow-hidden border-b border-border">
@@ -60,51 +107,33 @@ export function Hero() {
               </a>
             </div>
 
-            <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-8">
-              <div>
-                <dt className="font-mono text-xs uppercase tracking-wider text-muted">
-                  {t.ui.experience}
-                </dt>
-                <dd className="mt-1 text-sm text-foreground">
-                  {t.experienceYears}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-mono text-xs uppercase tracking-wider text-muted">
-                  GitHub
-                </dt>
-                <dd className="mt-1">
-                  <a
-                    href={t.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-accent underline-offset-4 hover:underline"
-                  >
-                    {t.githubHandle}
-                  </a>
-                </dd>
-              </div>
-              <div>
-                <dt className="font-mono text-xs uppercase tracking-wider text-muted">
-                  LinkedIn
-                </dt>
-                <dd className="mt-1">
-                  <a
-                    href={t.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-accent underline-offset-4 hover:underline"
-                  >
-                    {t.linkedinHandle}
-                  </a>
-                </dd>
-              </div>
-            </dl>
           </div>
 
           <div id="foco">
             <CodeWindow title="whoami.sh">
               <p className="font-mono text-[13px] sm:text-sm">
+                <span className="text-muted">$</span>{" "}
+                <span className="text-foreground/90">uptime --work-experience</span>
+              </p>
+
+              <ul className="mt-6">
+                <li className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[13px] sm:text-sm">
+                  <span
+                    className="shrink-0 font-medium"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    --work-experience
+                  </span>
+                  <span
+                    className="flex-1 basis-64 tabular-nums text-foreground/80"
+                    suppressHydrationWarning
+                  >
+                    {experience || "…"}
+                  </span>
+                </li>
+              </ul>
+
+              <p className="mt-6 font-mono text-[13px] sm:text-sm">
                 <span className="text-muted">$</span>{" "}
                 <span className="text-foreground/90">{t.ui.whoamiCommand}</span>
               </p>

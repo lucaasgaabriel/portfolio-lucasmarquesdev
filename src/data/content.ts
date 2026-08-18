@@ -32,7 +32,6 @@ export type Content = {
   role: string;
   location: string;
   footerLocation: string;
-  experienceYears: string;
   bio: string;
   linkedin: string;
   github: string;
@@ -43,8 +42,8 @@ export type Content = {
   projects: readonly Project[];
   navLinks: readonly NavLink[];
   ui: {
-    experience: string;
     whoamiCommand: string;
+    experienceYearUnit: string;
     stacksHeading: string;
     stacksSubtitle: string;
     projectsHeading: string;
@@ -317,7 +316,6 @@ export const content: Record<Lang, Content> = {
     role: "Engenharia de Software, Dados & IA · DevSecOps",
     location: "Distrito Federal, Brasil",
     footerLocation: "Distrito Federal · Brasil",
-    experienceYears: "7+ anos",
     bio: "Profissional de tecnologia com 7+ anos de experiência em DevSecOps, Engenharia de Software e IA. Projeto e construo soluções escaláveis, de pipelines de dados e arquiteturas cloud-native a agentes e sistemas com LLMs, com segurança desde o desenho.",
     linkedin: "https://www.linkedin.com/in/lucaasgaabriel14/",
     github: "https://github.com/lucaasgaabriel",
@@ -333,8 +331,8 @@ export const content: Record<Lang, Content> = {
       { href: "#contato", label: "Contato" },
     ],
     ui: {
-      experience: "Experiência",
       whoamiCommand: "whoami --focus",
+      experienceYearUnit: "a",
       stacksHeading: "Stacks",
       stacksSubtitle:
         "Da primeira linha de código à produção em escala: o que sustenta o que projeto e entrego de ponta a ponta, com segurança em cada camada.",
@@ -371,7 +369,6 @@ export const content: Record<Lang, Content> = {
     role: "Software Engineering, Data & AI · DevSecOps",
     location: "Distrito Federal, Brazil",
     footerLocation: "Distrito Federal · Brazil",
-    experienceYears: "7+ years",
     bio: "Technology professional with 7+ years of experience in DevSecOps, Software Engineering and AI. I design and build scalable solutions, from data pipelines and cloud-native architectures to agents and LLM-based systems, with security from the design phase.",
     linkedin: "https://www.linkedin.com/in/lucaasgaabriel14/",
     github: "https://github.com/lucaasgaabriel",
@@ -387,8 +384,8 @@ export const content: Record<Lang, Content> = {
       { href: "#contato", label: "Contact" },
     ],
     ui: {
-      experience: "Experience",
       whoamiCommand: "whoami --focus",
+      experienceYearUnit: "y",
       stacksHeading: "Stacks",
       stacksSubtitle:
         "From the first line of code to production at scale: what backs what I design and ship end to end, with security in every layer.",
