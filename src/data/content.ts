@@ -66,6 +66,10 @@ export type Content = {
     closeMenu: string;
     lightTheme: string;
     darkTheme: string;
+    meetMe: string;
+    meetMeTitle: string;
+    talkToMe: string;
+    closeDialog: string;
   };
 };
 
@@ -354,6 +358,10 @@ export const content: Record<Lang, Content> = {
       closeMenu: "Fechar menu",
       lightTheme: "Ativar tema claro",
       darkTheme: "Ativar tema escuro",
+      meetMe: "Me conheça",
+      meetMeTitle: "Onde me encontrar",
+      talkToMe: "Fale comigo",
+      closeDialog: "Fechar",
     },
   },
   en: {
@@ -404,6 +412,10 @@ export const content: Record<Lang, Content> = {
       closeMenu: "Close menu",
       lightTheme: "Switch to light theme",
       darkTheme: "Switch to dark theme",
+      meetMe: "Get to know me",
+      meetMeTitle: "Find me online",
+      talkToMe: "Talk to me",
+      closeDialog: "Close",
     },
   },
 };

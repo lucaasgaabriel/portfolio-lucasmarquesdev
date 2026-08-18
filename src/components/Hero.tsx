@@ -2,6 +2,7 @@
 
 import { CodeWindow } from "@/components/CodeWindow";
 import { IconRain } from "@/components/IconRain";
+import { MeetMeModal } from "@/components/MeetMeModal";
 import { useLanguage } from "@/lib/language-context";
 
 const TAG_COLOR: Record<string, string> = {
@@ -48,6 +49,16 @@ export function Hero() {
             <p className="mt-8 max-w-xl text-base leading-relaxed text-foreground/85">
               {t.bio}
             </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <MeetMeModal />
+              <a
+                href="#contato"
+                className="rounded-sm bg-accent px-4 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90"
+              >
+                {t.ui.talkToMe}
+              </a>
+            </div>
 
             <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-8">
               <div>
