@@ -41,6 +41,8 @@ pnpm deploy      # build + deploy para Cloudflare Workers
   `useLanguage`)
 - `src/lib/contact-schema.ts` — validação do formulário
 - `wrangler.jsonc` / `open-next.config.ts` — build e deploy no Cloudflare
+- `public/_headers` — headers de segurança para os assets estáticos servidos
+  direto pelo binding `ASSETS` do Cloudflare (ver nota de segurança abaixo)
 - `scripts/check-secrets.mjs` — scanner de segredos do pre-commit
 
 ## Decisões que valem uma nota
@@ -65,6 +67,15 @@ pnpm deploy      # build + deploy para Cloudflare Workers
   preferência de cliente existir.
 - **OpenNext, não `@cloudflare/next-on-pages`** — o site usa Server Actions,
   que o adapter mais antigo da Cloudflare não suporta bem.
+- **Headers de segurança duplicados (`next.config.ts` + `public/_headers`)**
+  — no Cloudflare, a página estática e os arquivos em `_next/static/*` são
+  servidos direto pelo binding `ASSETS`, sem passar pelo Worker. Isso significa
+  que `headers()` do `next.config.ts` nunca chega nessas respostas em produção;
+  só afeta `next dev`/`next start`. `public/_headers` (convenção do Cloudflare)
+  é a fonte real dos headers no site publicado; o `next.config.ts` existe para
+  manter paridade em desenvolvimento. Achado via DAST (ZAP) — sem ele, HSTS,
+  Permissions-Policy e Cross-Origin-Embedder-Policy simplesmente não existiam
+  na resposta real do site.
 - **CI/CD em estágios** — `quality` (lint, typecheck, audit, build) e
   `secrets-scan` (Gitleaks) rodam em todo push/PR sem precisar de secret;
   `deploy` só dispara em push para `main` e só depois que os dois passam;
@@ -103,6 +114,28 @@ pnpm deploy      # build + deploy para Cloudflare Workers
   deploy já aconteceu quando ele roda.
 - Sem autenticação, sem banco de dados — a superfície de ataque real é só o
   formulário de contato.
+
+### Achados do primeiro DAST e o que foi feito
+
+- **HSTS, Permissions-Policy e Cross-Origin-Embedder-Policy ausentes** —
+  causa raiz era estrutural (ver nota sobre `public/_headers` acima), não os
+  valores em si. Corrigido: os três headers agora chegam de fato na resposta,
+  via `public/_headers`. `Cross-Origin-Opener-Policy: same-origin` foi
+  adicionado junto, como o par usual de `Cross-Origin-Embedder-Policy`.
+  `Cross-Origin-Embedder-Policy: require-corp` só é seguro aqui porque a
+  única imagem cross-origin do site (avatar do GitHub) já responde com
+  `Cross-Origin-Resource-Policy: cross-origin` — confirmado antes de habilitar.
+- **CSP `script-src unsafe-inline`** — mantido como risco aceito, já
+  documentado acima (exigido pelo script de tema/idioma inline).
+- **Ausência de anti-CSRF token no formulário** — falso positivo do
+  scanner genérico: a Server Action do Next.js já valida a origem da
+  requisição no nível do framework, sem precisar de um token custom.
+- **"User Controllable HTML Element Attribute" (potencial XSS)** — revisado:
+  o site não reflete nenhum parâmetro de URL ou input do usuário em atributos
+  HTML (conteúdo é 100% estático, vindo de `content.ts`); tratado como falso
+  positivo do scanner heurístico.
+- **"Storable and Cacheable Content"** — aceito: não há dado sensível ou
+  por-usuário em nenhuma resposta do site para vazar via cache.
 
 ## CI/CD — secrets necessários
 
