@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { LanguageToggle } from "@/components/LanguageToggle";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/lib/language-context";
 
 export function MobileNav() {
@@ -72,11 +70,6 @@ export function MobileNav() {
               LinkedIn
             </a>
           </nav>
-
-          <div className="mt-5 flex items-center gap-2 border-t border-border pt-5">
-            <LanguageToggle />
-            <ThemeToggle />
-          </div>
         </div>
       )}
     </div>

@@ -30,8 +30,8 @@ export function Header() {
 
         <NavLinks />
 
-        <div className="flex items-center gap-2 justify-self-end">
-          <div className="hidden items-center gap-2 sm:flex">
+        <div className="flex items-center gap-1.5 justify-self-end sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <LanguageToggle />
             <ThemeToggle />
           </div>
