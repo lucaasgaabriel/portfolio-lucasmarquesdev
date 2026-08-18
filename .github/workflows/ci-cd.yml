@@ -94,3 +94,4 @@ jobs:
         with:
           target: "https://lucasgms.dev"
           cmd_options: "-I"
+          allow_issue_writing: false
