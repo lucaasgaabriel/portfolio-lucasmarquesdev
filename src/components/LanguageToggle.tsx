@@ -2,7 +2,7 @@
 
 import { useLanguage } from "@/lib/language-context";
 
-export function LanguageToggle() {
+export function LanguageToggle({ emphasized = false }: { emphasized?: boolean }) {
   const { lang, toggleLang } = useLanguage();
 
   return (
@@ -10,7 +10,9 @@ export function LanguageToggle() {
       type="button"
       onClick={toggleLang}
       aria-label={lang === "pt" ? "Switch to English" : "Mudar para português"}
-      className="flex h-8 items-center gap-1.5 rounded-sm border border-border px-1.5 text-sm transition-colors hover:border-accent sm:px-2"
+      className={`flex items-center gap-1.5 rounded-sm border border-border px-1.5 transition-all duration-300 hover:border-accent sm:px-2 ${
+        emphasized ? "h-9 text-base" : "h-8 text-sm"
+      }`}
     >
       <span
         aria-hidden

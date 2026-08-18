@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/language-context";
 
-function SunIcon() {
+function SunIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -12,7 +12,7 @@ function SunIcon() {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-4 w-4"
+      className={className}
     >
       <circle cx="12" cy="12" r="5" />
       <line x1="12" y1="1" x2="12" y2="3" />
@@ -27,7 +27,7 @@ function SunIcon() {
   );
 }
 
-function MoonIcon() {
+function MoonIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -36,14 +36,14 @@ function MoonIcon() {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-4 w-4"
+      className={className}
     >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ emphasized = false }: { emphasized?: boolean }) {
   const { t } = useLanguage();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
@@ -66,9 +66,15 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={theme === "dark" ? t.ui.lightTheme : t.ui.darkTheme}
-      className="flex h-8 w-8 items-center justify-center rounded-sm border border-border text-muted transition-colors hover:border-accent hover:text-foreground"
+      className={`flex items-center justify-center rounded-sm border border-border text-muted transition-all duration-300 hover:border-accent hover:text-foreground ${
+        emphasized ? "h-9 w-9" : "h-8 w-8"
+      }`}
     >
-      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+      {theme === "dark" ? (
+        <SunIcon className={emphasized ? "h-[18px] w-[18px]" : "h-4 w-4"} />
+      ) : (
+        <MoonIcon className={emphasized ? "h-[18px] w-[18px]" : "h-4 w-4"} />
+      )}
     </button>
   );
 }

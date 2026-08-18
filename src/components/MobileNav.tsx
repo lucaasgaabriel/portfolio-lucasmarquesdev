@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/lib/language-context";
 
-export function MobileNav() {
+export function MobileNav({ emphasized = false }: { emphasized?: boolean }) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
@@ -15,7 +15,9 @@ export function MobileNav() {
         aria-controls="mobile-nav-panel"
         aria-label={open ? t.ui.closeMenu : t.ui.openMenu}
         onClick={() => setOpen((value) => !value)}
-        className="flex h-9 w-9 items-center justify-center rounded-sm border border-border text-foreground transition-colors hover:border-accent"
+        className={`flex items-center justify-center rounded-sm border border-border text-foreground transition-all duration-300 hover:border-accent ${
+          emphasized ? "h-10 w-10" : "h-9 w-9"
+        }`}
       >
         <svg
           viewBox="0 0 24 24"
@@ -23,7 +25,7 @@ export function MobileNav() {
           stroke="currentColor"
           strokeWidth="1.75"
           strokeLinecap="round"
-          className="h-4 w-4"
+          className={emphasized ? "h-[18px] w-[18px]" : "h-4 w-4"}
           aria-hidden
         >
           {open ? (
