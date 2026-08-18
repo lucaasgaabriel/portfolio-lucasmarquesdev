@@ -1,4 +1,4 @@
-# lucasmarques.dev
+# lucasgms.dev
 
 Landing page pessoal de Lucas Marques (DevSecOps / Engenharia de Software,
 Dados & IA). Uma única rota, sem CMS, sem banco de dados: conteúdo bilíngue
