@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { navLinks, profile } from "@/data/profile";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/lib/language-context";
 
 export function MobileNav() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   return (
@@ -12,7 +15,7 @@ export function MobileNav() {
         type="button"
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
-        aria-label={open ? "Fechar menu" : "Abrir menu"}
+        aria-label={open ? t.ui.closeMenu : t.ui.openMenu}
         onClick={() => setOpen((value) => !value)}
         className="flex h-9 w-9 items-center justify-center rounded-sm border border-border text-foreground transition-colors hover:border-accent"
       >
@@ -46,10 +49,10 @@ export function MobileNav() {
           className="absolute inset-x-0 top-14 border-b border-border bg-background px-6 py-5"
         >
           <nav
-            aria-label="Principal"
+            aria-label={t.ui.mainNav}
             className="flex flex-col gap-4 font-mono text-sm"
           >
-            {navLinks.map((link) => (
+            {t.navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
@@ -60,7 +63,7 @@ export function MobileNav() {
               </a>
             ))}
             <a
-              href={profile.linkedin}
+              href={t.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
@@ -69,6 +72,11 @@ export function MobileNav() {
               LinkedIn
             </a>
           </nav>
+
+          <div className="mt-5 flex items-center gap-2 border-t border-border pt-5">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
         </div>
       )}
     </div>

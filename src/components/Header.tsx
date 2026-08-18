@@ -1,7 +1,10 @@
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { MobileNav } from "@/components/MobileNav";
 import { NavLinks } from "@/components/NavLinks";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { profile } from "@/data/profile";
+import { content } from "@/data/content";
+
+const profile = content.pt;
 
 export function Header() {
   return (
@@ -27,8 +30,9 @@ export function Header() {
 
         <NavLinks />
 
-        <div className="flex items-center justify-self-end">
-          <div className="hidden sm:block">
+        <div className="flex items-center gap-2 justify-self-end">
+          <div className="hidden items-center gap-2 sm:flex">
+            <LanguageToggle />
             <ThemeToggle />
           </div>
           <MobileNav />

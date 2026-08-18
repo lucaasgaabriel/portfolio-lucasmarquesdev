@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/lib/language-context";
 
 function SunIcon() {
   return (
@@ -43,6 +44,7 @@ function MoonIcon() {
 }
 
 export function ThemeToggle() {
+  const { t } = useLanguage();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
+      aria-label={theme === "dark" ? t.ui.lightTheme : t.ui.darkTheme}
       className="flex h-8 w-8 items-center justify-center rounded-sm border border-border text-muted transition-colors hover:border-accent hover:text-foreground"
     >
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}

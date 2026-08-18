@@ -1,23 +1,25 @@
+"use client";
+
 import { CATEGORY_META } from "@/components/icons";
-import { stackCategories } from "@/data/profile";
+import { useLanguage } from "@/lib/language-context";
 
 export function StackSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="stacks" className="border-b border-border bg-surface">
       <div className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
         <div className="mb-12 max-w-lg">
           <h2 className="font-display text-3xl font-medium text-foreground sm:text-4xl">
-            Stacks
+            {t.ui.stacksHeading}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted">
-            Da primeira linha de código à produção em escala — o que sustenta
-            o que projeto e entrego de ponta a ponta, com segurança em cada
-            camada.
+            {t.ui.stacksSubtitle}
           </p>
         </div>
 
         <div className="grid items-start gap-5 md:grid-cols-2">
-          {stackCategories.map((category) => {
+          {t.stackCategories.map((category) => {
             const { color, Icon } = CATEGORY_META[category.id];
             return (
               <div

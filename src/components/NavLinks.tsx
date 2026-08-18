@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { navLinks } from "@/data/profile";
+import { useLanguage } from "@/lib/language-context";
 
 export function NavLinks() {
+  const { t } = useLanguage();
   const [active, setActive] = useState("");
 
   useEffect(() => {
-    const sections = navLinks
+    const sections = t.navLinks
       .map((link) => document.getElementById(link.href.slice(1)))
       .filter((el): el is HTMLElement => el !== null);
 
@@ -24,11 +25,11 @@ export function NavLinks() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [t.navLinks]);
 
   return (
-    <nav aria-label="Principal" className="hidden gap-1 sm:flex">
-      {navLinks.map((link) => (
+    <nav aria-label={t.ui.mainNav} className="hidden gap-1 sm:flex">
+      {t.navLinks.map((link) => (
         <a
           key={link.href}
           href={link.href}

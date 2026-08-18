@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { submitContact, type ContactState } from "@/app/actions/contact";
 import { CodeWindow } from "@/components/CodeWindow";
-import { profile } from "@/data/profile";
+import { useLanguage } from "@/lib/language-context";
 
 const initialState: ContactState = { status: "idle" };
 
@@ -17,6 +17,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export function ContactSection() {
+  const { t, lang } = useLanguage();
   const [state, formAction, pending] = useActionState(
     submitContact,
     initialState,
@@ -28,15 +29,14 @@ export function ContactSection() {
         <div className="grid gap-16 lg:grid-cols-[1fr_1.1fr]">
           <div>
             <h2 className="font-display text-3xl font-medium text-foreground sm:text-4xl">
-              Contato profissional
+              {t.ui.contactHeading}
             </h2>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
-              Vamos trocar uma ideia sobre IA, desenvolvimento, cloud, dados ou
-              DevSecOps? Respondo mais rápido pelo LinkedIn.
+              {t.ui.contactSubtitle}
             </p>
 
             <a
-              href={profile.linkedin}
+              href={t.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="group mt-10 flex items-center justify-between rounded-md border border-border px-4 py-3 text-sm transition-colors hover:border-accent"
@@ -59,13 +59,15 @@ export function ContactSection() {
                 LinkedIn
               </span>
               <span className="text-foreground group-hover:text-accent">
-                /in/lucaasgaabriel14
+                {t.linkedinHandle}
               </span>
             </a>
           </div>
 
           <CodeWindow title="contact.ts">
             <form action={formAction} noValidate className="space-y-5">
+              <input type="hidden" name="lang" value={lang} />
+
               <div className="sr-only" aria-hidden>
                 <label htmlFor="website">Website</label>
                 <input
@@ -82,7 +84,7 @@ export function ContactSection() {
                   htmlFor="name"
                   className="block font-mono text-xs uppercase tracking-wider text-muted"
                 >
-                  Nome
+                  {t.ui.formName}
                 </label>
                 <input
                   id="name"
@@ -91,7 +93,7 @@ export function ContactSection() {
                   required
                   autoComplete="name"
                   maxLength={80}
-                  placeholder="Seu nome"
+                  placeholder={t.ui.formNamePlaceholder}
                   className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-accent"
                 />
                 <FieldError message={state.fieldErrors?.name} />
@@ -102,7 +104,7 @@ export function ContactSection() {
                   htmlFor="email"
                   className="block font-mono text-xs uppercase tracking-wider text-muted"
                 >
-                  E-mail
+                  {t.ui.formEmail}
                 </label>
                 <input
                   id="email"
@@ -111,7 +113,7 @@ export function ContactSection() {
                   required
                   autoComplete="email"
                   maxLength={254}
-                  placeholder="voce@email.com"
+                  placeholder={t.ui.formEmailPlaceholder}
                   className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-accent"
                 />
                 <FieldError message={state.fieldErrors?.email} />
@@ -122,7 +124,7 @@ export function ContactSection() {
                   htmlFor="message"
                   className="block font-mono text-xs uppercase tracking-wider text-muted"
                 >
-                  Mensagem
+                  {t.ui.formMessage}
                 </label>
                 <textarea
                   id="message"
@@ -130,7 +132,7 @@ export function ContactSection() {
                   required
                   rows={5}
                   maxLength={2000}
-                  placeholder="Conte um pouco sobre o projeto ou oportunidade"
+                  placeholder={t.ui.formMessagePlaceholder}
                   className="mt-2 w-full resize-y border-b border-border bg-transparent py-2 text-sm leading-relaxed text-foreground outline-none transition-colors focus:border-accent"
                 />
                 <FieldError message={state.fieldErrors?.message} />
@@ -153,7 +155,7 @@ export function ContactSection() {
                 disabled={pending}
                 className="w-full rounded-sm bg-accent px-4 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-50"
               >
-                {pending ? "Enviando…" : "Enviar mensagem"}
+                {pending ? t.ui.formSubmitting : t.ui.formSubmit}
               </button>
             </form>
           </CodeWindow>

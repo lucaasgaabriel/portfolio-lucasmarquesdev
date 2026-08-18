@@ -12,11 +12,31 @@ export type ContactPayload = {
   email: string;
   message: string;
   website?: string;
+  lang?: "pt" | "en";
 };
 
 export type ContactValidationResult =
-  | { ok: true; data: Omit<ContactPayload, "website"> }
+  | { ok: true; data: Omit<ContactPayload, "website" | "lang"> }
   | { ok: false; errors: ContactFieldErrors };
+
+const messages = {
+  pt: {
+    name: "Informe seu nome.",
+    nameMax: (max: number) => `Máximo de ${max} caracteres.`,
+    email: "Informe um e-mail válido.",
+    emailMax: "E-mail muito longo.",
+    message: "Mensagem deve ter ao menos 20 caracteres.",
+    messageMax: (max: number) => `Máximo de ${max} caracteres.`,
+  },
+  en: {
+    name: "Please enter your name.",
+    nameMax: (max: number) => `Maximum of ${max} characters.`,
+    email: "Please enter a valid email.",
+    emailMax: "Email is too long.",
+    message: "Message must be at least 20 characters long.",
+    messageMax: (max: number) => `Maximum of ${max} characters.`,
+  },
+} as const;
 
 function sanitize(value: string): string {
   return value.trim().replace(/\s+/g, " ");
@@ -29,27 +49,28 @@ export function validateContactPayload(
     return { ok: false, errors: {} };
   }
 
+  const m = messages[payload.lang === "en" ? "en" : "pt"];
   const errors: ContactFieldErrors = {};
   const name = sanitize(payload.name);
   const email = sanitize(payload.email).toLowerCase();
   const message = sanitize(payload.message);
 
   if (!name || name.length < 2) {
-    errors.name = "Informe seu nome.";
+    errors.name = m.name;
   } else if (name.length > MAX_NAME) {
-    errors.name = `Máximo de ${MAX_NAME} caracteres.`;
+    errors.name = m.nameMax(MAX_NAME);
   }
 
   if (!email || !EMAIL_PATTERN.test(email)) {
-    errors.email = "Informe um e-mail válido.";
+    errors.email = m.email;
   } else if (email.length > MAX_EMAIL) {
-    errors.email = "E-mail muito longo.";
+    errors.email = m.emailMax;
   }
 
   if (!message || message.length < 20) {
-    errors.message = "Mensagem deve ter ao menos 20 caracteres.";
+    errors.message = m.message;
   } else if (message.length > MAX_MESSAGE) {
-    errors.message = `Máximo de ${MAX_MESSAGE} caracteres.`;
+    errors.message = m.messageMax(MAX_MESSAGE);
   }
 
   if (Object.keys(errors).length > 0) {

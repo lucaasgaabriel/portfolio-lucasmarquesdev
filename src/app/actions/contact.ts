@@ -8,15 +8,30 @@ export type ContactState = {
   fieldErrors?: Partial<Record<"name" | "email" | "message", string>>;
 };
 
+const copy = {
+  pt: {
+    reviewFields: "Revise os campos destacados.",
+    received: "Mensagem recebida. Retorno em breve pelo e-mail informado.",
+  },
+  en: {
+    reviewFields: "Please review the highlighted fields.",
+    received: "Message received. I'll get back to you at the email you provided.",
+  },
+} as const;
+
 export async function submitContact(
   _prev: ContactState,
   formData: FormData,
 ): Promise<ContactState> {
+  const lang = formData.get("lang") === "en" ? "en" : "pt";
+  const c = copy[lang];
+
   const result = validateContactPayload({
     name: String(formData.get("name") ?? ""),
     email: String(formData.get("email") ?? ""),
     message: String(formData.get("message") ?? ""),
     website: String(formData.get("website") ?? ""),
+    lang,
   });
 
   if (!result.ok) {
@@ -26,7 +41,7 @@ export async function submitContact(
 
     return {
       status: "error",
-      message: "Revise os campos destacados.",
+      message: c.reviewFields,
       fieldErrors: result.errors,
     };
   }
@@ -40,6 +55,6 @@ export async function submitContact(
 
   return {
     status: "success",
-    message: "Mensagem recebida. Retorno em breve pelo e-mail informado.",
+    message: c.received,
   };
 }

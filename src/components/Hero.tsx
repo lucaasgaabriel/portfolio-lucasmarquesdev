@@ -1,6 +1,8 @@
+"use client";
+
 import { CodeWindow } from "@/components/CodeWindow";
 import { IconRain } from "@/components/IconRain";
-import { focusAreas, profile } from "@/data/profile";
+import { useLanguage } from "@/lib/language-context";
 
 const TAG_COLOR: Record<string, string> = {
   DEV: "var(--accent-web)",
@@ -12,6 +14,8 @@ const TAG_COLOR: Record<string, string> = {
 };
 
 export function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative overflow-hidden border-b border-border">
       <IconRain />
@@ -19,11 +23,11 @@ export function Hero() {
         <div className="grid gap-14 lg:grid-cols-[1.1fr_0.95fr] lg:items-start">
           <div>
             <p className="mb-6 font-mono text-xs uppercase tracking-[0.2em] text-muted">
-              {profile.location}
+              {t.location}
             </p>
 
             <h1 className="max-w-xl font-display text-5xl font-medium leading-[1.05] tracking-tight text-foreground sm:text-6xl">
-              {profile.name}
+              {t.name}
             </h1>
 
             <div
@@ -39,19 +43,19 @@ export function Hero() {
               ))}
             </div>
 
-            <p className="mt-6 max-w-xl text-lg text-muted">{profile.role}</p>
+            <p className="mt-6 max-w-xl text-lg text-muted">{t.role}</p>
 
             <p className="mt-8 max-w-xl text-base leading-relaxed text-foreground/85">
-              {profile.bio}
+              {t.bio}
             </p>
 
             <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-8">
               <div>
                 <dt className="font-mono text-xs uppercase tracking-wider text-muted">
-                  Experiência
+                  {t.ui.experience}
                 </dt>
                 <dd className="mt-1 text-sm text-foreground">
-                  {profile.experienceYears} anos
+                  {t.experienceYears}
                 </dd>
               </div>
               <div>
@@ -60,12 +64,12 @@ export function Hero() {
                 </dt>
                 <dd className="mt-1">
                   <a
-                    href={profile.github}
+                    href={t.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-accent underline-offset-4 hover:underline"
                   >
-                    @lucaasgaabriel14
+                    {t.githubHandle}
                   </a>
                 </dd>
               </div>
@@ -75,12 +79,12 @@ export function Hero() {
                 </dt>
                 <dd className="mt-1">
                   <a
-                    href={profile.linkedin}
+                    href={t.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-accent underline-offset-4 hover:underline"
                   >
-                    /in/lucaasgaabriel14
+                    {t.linkedinHandle}
                   </a>
                 </dd>
               </div>
@@ -91,11 +95,11 @@ export function Hero() {
             <CodeWindow title="whoami.sh">
               <p className="font-mono text-[13px] sm:text-sm">
                 <span className="text-muted">$</span>{" "}
-                <span className="text-foreground/90">whoami --focus</span>
+                <span className="text-foreground/90">{t.ui.whoamiCommand}</span>
               </p>
 
               <ul className="mt-6 space-y-4">
-                {focusAreas.map((area) => (
+                {t.focusAreas.map((area) => (
                   <li
                     key={area.tag}
                     className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[13px] sm:text-sm"

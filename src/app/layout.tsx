@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
-import { profile } from "@/data/profile";
+import { content } from "@/data/content";
+import { LanguageProvider } from "@/lib/language-context";
 import "./globals.css";
+
+const profile = content.pt;
 
 const sans = IBM_Plex_Sans({
   variable: "--font-sans",
@@ -41,6 +44,11 @@ const themeInitScript = `
     if (localStorage.getItem('theme') === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
     }
+    var lang = localStorage.getItem('lang');
+    if (lang === 'en') {
+      document.documentElement.setAttribute('data-lang', 'en');
+      document.documentElement.lang = 'en';
+    }
   } catch (e) {}
 `;
 
@@ -55,7 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-full flex flex-col font-sans antialiased">
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );
