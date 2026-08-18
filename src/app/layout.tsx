@@ -24,7 +24,7 @@ const mono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-const title = `${profile.name} — ${profile.role}`;
+const title = "lucasmarquesdev";
 
 export const metadata: Metadata = {
   title,
