@@ -26,7 +26,6 @@ export type NavLink = {
 };
 
 export type Content = {
-  name: string;
   fullName: string;
   handle: string;
   role: string;
@@ -310,9 +309,8 @@ const projectsEn: readonly Project[] = [
 
 export const content: Record<Lang, Content> = {
   pt: {
-    name: "Lucas Marques",
     fullName: "Lucas Gabriel Marques Soares",
-    handle: "lucasmarques",
+    handle: "lucasgms",
     role: "Engenharia de Software, Dados & IA · DevSecOps",
     location: "Distrito Federal, Brasil",
     footerLocation: "Distrito Federal · Brasil",
@@ -363,9 +361,8 @@ export const content: Record<Lang, Content> = {
     },
   },
   en: {
-    name: "Lucas Marques",
     fullName: "Lucas Gabriel Marques Soares",
-    handle: "lucasmarques",
+    handle: "lucasgms",
     role: "Software Engineering, Data & AI · DevSecOps",
     location: "Distrito Federal, Brazil",
     footerLocation: "Distrito Federal · Brazil",

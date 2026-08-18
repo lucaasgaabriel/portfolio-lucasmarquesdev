@@ -24,12 +24,12 @@ const mono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-const title = "lucasmarquesdev";
+const title = "Lucas Marques • DEV";
 
 export const metadata: Metadata = {
   title,
   description: profile.bio,
-  metadataBase: new URL("https://lucasmarques.dev"),
+  metadataBase: new URL("https://lucasgms.dev"),
   openGraph: {
     title,
     description: profile.bio,

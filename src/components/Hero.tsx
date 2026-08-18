@@ -65,7 +65,7 @@ export function Hero() {
   }, [t.ui.experienceYearUnit]);
 
   return (
-    <section className="relative overflow-hidden border-b border-border">
+    <section id="hero" className="relative overflow-hidden border-b border-border">
       <IconRain />
       <div className="relative z-10 mx-auto max-w-5xl px-6 py-24 sm:py-32">
         <div className="grid gap-14 lg:grid-cols-[1.1fr_0.95fr] lg:items-start">
@@ -74,9 +74,17 @@ export function Hero() {
               {t.location}
             </p>
 
-            <h1 className="max-w-xl font-display text-5xl font-medium leading-[1.05] tracking-tight text-foreground sm:text-6xl">
-              {t.name}
+            <h1 className="max-w-full whitespace-nowrap font-display text-[clamp(1.875rem,12px_+_5.625vw,3.75rem)] font-medium leading-[1.05] tracking-tight text-foreground">
+              {t.handle}
+              <span className="text-accent">.</span>dev
+              <span className="cursor-blink text-accent" aria-hidden>
+                _
+              </span>
             </h1>
+
+            <p className="mt-3 max-w-xl font-display text-xl text-foreground/80 sm:text-2xl">
+              {t.fullName}
+            </p>
 
             <div
               className="mt-8 flex w-full max-w-[19rem] items-center gap-1.5 sm:max-w-sm"
