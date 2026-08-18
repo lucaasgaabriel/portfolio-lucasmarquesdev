@@ -26,19 +26,19 @@
   --background: #f7f6f3;
   --surface: #eeece6;
   --foreground: #24262b;
-  --muted: #6b6d75;
+  --muted: #64666e;
   --border: #dedad0;
-  --accent: #a15c1f;
+  --accent: #8a4e1a;
   --error: #c0392b;
 
-  --accent-lang: #2f9e44;
-  --accent-web: #0f7490;
+  --accent-lang: #187a30;
+  --accent-web: #0a5f78;
   --accent-eng: #a3348c;
   --accent-cloud: #1c64c9;
   --accent-devops: #52606d;
-  --accent-security: #a16207;
+  --accent-security: #8a5306;
   --accent-database: #9a4a26;
-  --accent-dataeng: #2f7d6e;
+  --accent-dataeng: #256355;
   --accent-mobile: #4f6b85;
   --accent-ai: #8b3fa3;
 }
