@@ -31,8 +31,6 @@ export async function submitContact(
     };
   }
 
-  // YAGNI: sem serviço de e-mail configurado — validação server-side + resposta segura.
-  // Integre Resend, SES ou similar quando necessário.
   console.info("[contact]", {
     at: new Date().toISOString(),
     from: result.data.email,

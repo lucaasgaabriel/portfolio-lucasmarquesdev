@@ -1,5 +1,6 @@
 import { MobileNav } from "@/components/MobileNav";
-import { navLinks, profile } from "@/data/profile";
+import { NavLinks } from "@/components/NavLinks";
+import { profile } from "@/data/profile";
 
 export function Header() {
   return (
@@ -23,17 +24,7 @@ export function Header() {
           </span>
         </a>
 
-        <nav aria-label="Principal" className="hidden gap-8 sm:flex">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm text-muted transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+        <NavLinks />
 
         <a
           href={profile.linkedin}

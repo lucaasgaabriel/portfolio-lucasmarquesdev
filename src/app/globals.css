@@ -1,10 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* Editor-inspired palette (One Dark). Foreground/muted are the editor's
-     default text and comment grays; the accent set mirrors syntax tokens
-     (string, function, type, keyword, tag) so each hue reads as familiar
-     to anyone who has spent time in a code editor. */
+  /* One Dark palette — accents double as syntax-token colors. */
   --background: #282c34;
   --surface: #2c313a;
   --foreground: #abb2bf;
@@ -57,7 +54,6 @@ body {
   background-color: color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
-/* Hero signal trace — draws in once on load, like an uptime monitor. */
 .signal-trace path {
   stroke-dasharray: 640;
   stroke-dashoffset: 640;
@@ -70,7 +66,6 @@ body {
   }
 }
 
-/* Header logo — terminal-style blinking cursor. */
 .cursor-blink {
   animation: cursor-blink 1.1s steps(1) infinite;
 }
@@ -86,9 +81,39 @@ body {
   }
 }
 
+/* transform-only keyframe: runs on the compositor, no per-frame JS. */
+.icon-rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.icon-rain-item {
+  position: absolute;
+  top: 0;
+  animation-name: icon-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes icon-fall {
+  from {
+    transform: translateY(-15vh);
+  }
+  to {
+    transform: translateY(115vh);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .icon-rain {
+    display: none;
   }
 
   .signal-trace path {

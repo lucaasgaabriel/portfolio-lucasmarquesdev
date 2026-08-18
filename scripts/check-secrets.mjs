@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-// Fast, dependency-free secret scan over staged files (paths via argv).
-// Runs from lint-staged, so it only ever touches what's about to be committed.
+// Invoked by lint-staged with the list of staged file paths.
 
 import { readFileSync } from "node:fs";
 

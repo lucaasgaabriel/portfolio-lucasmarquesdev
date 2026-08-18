@@ -1,4 +1,5 @@
 import { CodeWindow } from "@/components/CodeWindow";
+import { IconRain } from "@/components/IconRain";
 import { focusAreas, profile } from "@/data/profile";
 
 const TAG_COLOR: Record<string, string> = {
@@ -12,8 +13,9 @@ const TAG_COLOR: Record<string, string> = {
 
 export function Hero() {
   return (
-    <section className="border-b border-border">
-      <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
+    <section className="relative overflow-hidden border-b border-border">
+      <IconRain />
+      <div className="relative z-10 mx-auto max-w-5xl px-6 py-24 sm:py-32">
         <div className="grid gap-14 lg:grid-cols-[1.1fr_0.95fr] lg:items-start">
           <div>
             <p className="mb-6 font-mono text-xs uppercase tracking-[0.2em] text-muted">

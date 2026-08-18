@@ -4,8 +4,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 const csp = [
   "default-src 'self'",
-  // 'unsafe-eval' is required only in dev for React/Turbopack debugging (HMR, stack traces).
-  // React never calls eval() in production, so it's omitted from the prod policy.
+  // 'unsafe-eval' only in dev — Turbopack/React need it for HMR, never for prod.
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",

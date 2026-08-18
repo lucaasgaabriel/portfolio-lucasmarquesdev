@@ -54,6 +54,9 @@ Para o deploy funcionar, configure estes secrets no repositório do GitHub (Sett
 - `CLOUDFLARE_API_TOKEN` — token com permissão de editar Workers (Cloudflare dashboard → My Profile → API Tokens)
 - `CLOUDFLARE_ACCOUNT_ID` — ID da conta Cloudflare
 
+Decisões de arquitetura e por que o projeto é montado desse jeito estão em
+[ARCHITECTURE.md](./ARCHITECTURE.md).
+
 ## Estrutura
 
 - `src/app` — rotas, layout raiz, ícone/favicon gerado e a Server Action de contato
