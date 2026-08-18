@@ -163,7 +163,7 @@ export function StackSection() {
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2 md:grid-flow-col md:grid-rows-5 md:auto-cols-fr">
                   {category.items.map((item) => (
                     <div
                       key={item}

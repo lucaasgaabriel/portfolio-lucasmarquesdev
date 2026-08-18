@@ -39,7 +39,7 @@ export function ContactSection() {
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="group mt-10 flex items-center justify-between border-b border-border py-3 text-sm transition-colors hover:border-accent"
+              className="group mt-10 flex items-center justify-between rounded-md border border-border px-4 py-3 text-sm transition-colors hover:border-accent"
             >
               <span className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted">
                 <svg
