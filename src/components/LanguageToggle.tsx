@@ -10,21 +10,25 @@ export function LanguageToggle({ emphasized = false }: { emphasized?: boolean })
       type="button"
       onClick={toggleLang}
       aria-label={lang === "pt" ? "Switch to English" : "Mudar para português"}
-      className={`flex items-center gap-1.5 rounded-sm border border-border px-1.5 transition-all duration-300 hover:border-accent sm:px-2 ${
-        emphasized ? "h-9 text-base" : "h-8 text-sm"
+      className={`flex items-center justify-center gap-1.5 rounded-sm border border-border transition-all duration-300 hover:border-accent sm:w-auto sm:px-2 ${
+        emphasized ? "h-9 w-9 text-base" : "h-8 w-8 text-sm"
       }`}
     >
       <span
         aria-hidden
-        className={lang === "pt" ? "opacity-100" : "hidden opacity-35 sm:inline"}
+        className={`${lang === "pt" ? "inline" : "hidden"} sm:inline ${
+          lang === "en" ? "sm:opacity-100" : "sm:opacity-35"
+        }`}
       >
-        🇧🇷
+        🇺🇸
       </span>
       <span
         aria-hidden
-        className={lang === "en" ? "opacity-100" : "hidden opacity-35 sm:inline"}
+        className={`${lang === "en" ? "inline" : "hidden"} sm:inline ${
+          lang === "pt" ? "sm:opacity-100" : "sm:opacity-35"
+        }`}
       >
-        🇺🇸
+        🇧🇷
       </span>
     </button>
   );

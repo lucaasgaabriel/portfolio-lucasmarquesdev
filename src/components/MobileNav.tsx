@@ -16,7 +16,7 @@ export function MobileNav({ emphasized = false }: { emphasized?: boolean }) {
         aria-label={open ? t.ui.closeMenu : t.ui.openMenu}
         onClick={() => setOpen((value) => !value)}
         className={`flex items-center justify-center rounded-sm border border-border text-foreground transition-all duration-300 hover:border-accent ${
-          emphasized ? "h-10 w-10" : "h-9 w-9"
+          emphasized ? "h-9 w-9" : "h-8 w-8"
         }`}
       >
         <svg
