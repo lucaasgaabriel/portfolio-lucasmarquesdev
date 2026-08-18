@@ -36,12 +36,24 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const themeInitScript = `
+  try {
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  } catch (e) {}
+`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
+      suppressHydrationWarning
       className={`${sans.variable} ${display.variable} ${mono.variable} h-full scroll-smooth`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col font-sans antialiased">
         {children}
       </body>

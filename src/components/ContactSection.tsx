@@ -23,7 +23,7 @@ export function ContactSection() {
   );
 
   return (
-    <section id="contato">
+    <section id="contato" className="bg-surface">
       <div className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
         <div className="grid gap-16 lg:grid-cols-[1fr_1.1fr]">
           <div>
@@ -91,6 +91,7 @@ export function ContactSection() {
                   required
                   autoComplete="name"
                   maxLength={80}
+                  placeholder="Seu nome"
                   className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-accent"
                 />
                 <FieldError message={state.fieldErrors?.name} />
@@ -110,6 +111,7 @@ export function ContactSection() {
                   required
                   autoComplete="email"
                   maxLength={254}
+                  placeholder="voce@email.com"
                   className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm text-foreground outline-none transition-colors focus:border-accent"
                 />
                 <FieldError message={state.fieldErrors?.email} />
@@ -128,6 +130,7 @@ export function ContactSection() {
                   required
                   rows={5}
                   maxLength={2000}
+                  placeholder="Conte um pouco sobre o projeto ou oportunidade"
                   className="mt-2 w-full resize-y border-b border-border bg-transparent py-2 text-sm leading-relaxed text-foreground outline-none transition-colors focus:border-accent"
                 />
                 <FieldError message={state.fieldErrors?.message} />

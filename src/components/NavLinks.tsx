@@ -27,15 +27,15 @@ export function NavLinks() {
   }, []);
 
   return (
-    <nav aria-label="Principal" className="hidden gap-8 sm:flex">
+    <nav aria-label="Principal" className="hidden gap-1 sm:flex">
       {navLinks.map((link) => (
         <a
           key={link.href}
           href={link.href}
           className={
             active === link.href
-              ? "text-sm text-accent transition-colors"
-              : "text-sm text-muted transition-colors hover:text-foreground"
+              ? "rounded-sm bg-accent/10 px-3 py-1.5 text-sm text-accent transition-colors"
+              : "rounded-sm px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
           }
         >
           {link.label}

@@ -16,7 +16,7 @@ export function StackSection() {
           </p>
         </div>
 
-        <div className="grid items-start gap-5 md:grid-flow-col md:grid-rows-5 md:auto-cols-fr">
+        <div className="grid items-start gap-5 md:grid-cols-2">
           {stackCategories.map((category) => {
             const { color, Icon } = CATEGORY_META[category.id];
             return (

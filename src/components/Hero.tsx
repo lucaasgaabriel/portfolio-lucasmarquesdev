@@ -5,7 +5,7 @@ import { focusAreas, profile } from "@/data/profile";
 const TAG_COLOR: Record<string, string> = {
   DEV: "var(--accent-web)",
   ENG: "var(--accent-eng)",
-  IAC: "var(--accent-cloud)",
+  DEVOPS: "var(--accent-devops)",
   AI: "var(--accent-ai)",
   DATA: "var(--accent-dataeng)",
   SEC: "var(--accent-security)",
@@ -26,19 +26,18 @@ export function Hero() {
               {profile.name}
             </h1>
 
-            <svg
-              className="signal-trace mt-8 h-10 w-full max-w-md"
-              viewBox="0 0 600 60"
-              fill="none"
+            <div
+              className="mt-8 flex w-full max-w-[19rem] items-center gap-1.5 sm:max-w-sm"
               aria-hidden
             >
-              <path
-                d="M0,30 L70,30 C95,30 100,6 122,6 C144,6 148,54 170,54 C192,54 197,30 222,30 L600,30"
-                stroke="var(--accent)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+              {Array.from({ length: 28 }).map((_, index) => (
+                <span
+                  key={index}
+                  className="h-1 w-1 shrink-0 rounded-full"
+                  style={{ backgroundColor: "var(--accent)" }}
+                />
+              ))}
+            </div>
 
             <p className="mt-6 max-w-xl text-lg text-muted">{profile.role}</p>
 
@@ -46,7 +45,7 @@ export function Hero() {
               {profile.bio}
             </p>
 
-            <dl className="mt-14 grid max-w-sm grid-cols-2 gap-6 border-t border-border pt-8">
+            <dl className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-8">
               <div>
                 <dt className="font-mono text-xs uppercase tracking-wider text-muted">
                   Experiência
@@ -67,6 +66,21 @@ export function Hero() {
                     className="text-sm text-accent underline-offset-4 hover:underline"
                   >
                     @lucaasgaabriel14
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-xs uppercase tracking-wider text-muted">
+                  LinkedIn
+                </dt>
+                <dd className="mt-1">
+                  <a
+                    href={profile.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-accent underline-offset-4 hover:underline"
+                  >
+                    /in/lucaasgaabriel14
                   </a>
                 </dd>
               </div>

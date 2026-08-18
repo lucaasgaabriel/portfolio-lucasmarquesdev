@@ -22,6 +22,27 @@
   --accent-ai: #c678dd;
 }
 
+:root[data-theme="light"] {
+  --background: #f7f6f3;
+  --surface: #eeece6;
+  --foreground: #24262b;
+  --muted: #6b6d75;
+  --border: #dedad0;
+  --accent: #a15c1f;
+  --error: #c0392b;
+
+  --accent-lang: #2f9e44;
+  --accent-web: #0f7490;
+  --accent-eng: #a3348c;
+  --accent-cloud: #1c64c9;
+  --accent-devops: #52606d;
+  --accent-security: #a16207;
+  --accent-database: #9a4a26;
+  --accent-dataeng: #2f7d6e;
+  --accent-mobile: #4f6b85;
+  --accent-ai: #8b3fa3;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
@@ -52,18 +73,6 @@ body {
 
 ::selection {
   background-color: color-mix(in srgb, var(--accent) 30%, transparent);
-}
-
-.signal-trace path {
-  stroke-dasharray: 640;
-  stroke-dashoffset: 640;
-  animation: signal-draw 1.8s cubic-bezier(0.65, 0.05, 0.36, 1) 0.15s forwards;
-}
-
-@keyframes signal-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
 }
 
 .cursor-blink {
@@ -114,11 +123,6 @@ body {
 
   .icon-rain {
     display: none;
-  }
-
-  .signal-trace path {
-    animation: none;
-    stroke-dashoffset: 0;
   }
 
   .cursor-blink {
