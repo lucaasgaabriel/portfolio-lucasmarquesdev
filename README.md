@@ -169,8 +169,8 @@ pnpm cf-typegen
   painel da Resend e ajuste `CONTACT_FROM` em `src/lib/email.ts`.
 - `TURNSTILE_SECRET_KEY` — gerada ao criar um widget em Cloudflare →
   Turnstile. A *site key* correspondente (pública por natureza) fica
-  hardcoded em `src/lib/turnstile.ts` como `TURNSTILE_SITE_KEY` — troque o
-  valor de teste pela chave real do widget criado.
+  hardcoded em `src/lib/turnstile.ts` como `TURNSTILE_SITE_KEY`, atrelada ao
+  domínio do widget criado no dashboard.
 
 ## CI/CD — secrets necessários
 

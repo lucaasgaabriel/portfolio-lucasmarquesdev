@@ -1,9 +1,7 @@
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 // Public by design — Cloudflare's own docs put this directly in client HTML.
-// Replace with the real site key after creating a Turnstile widget in the
-// Cloudflare dashboard (Turnstile → Add site).
-export const TURNSTILE_SITE_KEY = "1x00000000000000000000AA";
+export const TURNSTILE_SITE_KEY = "0x4AAAAAAEYKYUgEJ5AgJfSc";
 
 export async function verifyTurnstile(
   token: string,
