@@ -58,9 +58,66 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  codeql:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:javascript-typescript"
+
+  dast:
+    name: DAST (OWASP ZAP baseline)
+    needs: [quality, secrets-scan, codeql]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Generate Cloudflare binding types
+        run: pnpm cf-typegen
+
+      - name: Build Worker bundle
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Start local preview
+        run: |
+          nohup pnpm exec wrangler dev --port 8788 > wrangler-dev.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8788/ >/dev/null && exit 0
+            sleep 1
+          done
+          echo "Worker never came up:"; cat wrangler-dev.log; exit 1
+
+      - name: ZAP baseline scan against the local build
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: "http://127.0.0.1:8788"
+          cmd_options: "-I"
+          allow_issue_writing: false
+
   deploy:
     name: Deploy to Cloudflare
-    needs: [quality, secrets-scan]
+    needs: [quality, secrets-scan, codeql, dast]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
@@ -86,18 +143,3 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-  dast:
-    name: DAST (OWASP ZAP baseline)
-    needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: ZAP baseline scan against the live site
-        uses: zaproxy/action-baseline@v0.15.0
-        with:
-          target: "https://lucasgms.dev"
-          cmd_options: "-I"
-          allow_issue_writing: false
