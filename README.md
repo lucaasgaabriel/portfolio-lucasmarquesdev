@@ -2,34 +2,14 @@
 
 [![CI/CD](https://github.com/lucaasgaabriel/portfolio-lucasmarquesdev/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/lucaasgaabriel/portfolio-lucasmarquesdev/actions/workflows/ci-cd.yml)
 
-**[lucasgms.dev](https://lucasgms.dev)** — landing page pessoal de Lucas
-Marques (DevSecOps / Engenharia de Software, Dados & IA).
-
-Não é uma vitrine estática: é publicado como um serviço de produção de
-verdade, com pipeline de CI/CD em estágios, formulário de contato com defesa
-em profundidade contra abuso e uma esteira de segurança automatizada (SAST,
-DAST, scanner de segredos, auditoria de dependências) rodando a cada push.
+Landing page pessoal de Lucas Marques (DevSecOps / Engenharia de Software,
+Dados & IA), publicada em [lucasgms.dev](https://lucasgms.dev). Uma única
+rota, sem CMS, sem banco de dados: conteúdo bilíngue (PT/EN) em
+`src/data/content.ts`, formulário de contato com honeypot + CAPTCHA + rate
+limit + envio via Resend, deploy em Cloudflare Workers.
 
 **Stack:** Next.js 16.3 (App Router) · React 19 · TypeScript · Tailwind CSS v4
-· Cloudflare Workers (`@opennextjs/cloudflare`)
-
-## Destaques técnicos
-
-- **Zero backend tradicional** — sem CMS, sem banco de dados. Conteúdo
-  bilíngue (PT/EN) versionado em código, formulário de contato via Server
-  Action, e-mail via Resend, tudo publicado como um único Worker na borda da
-  Cloudflare.
-- **Defesa em profundidade no formulário de contato** — honeypot → validação
-  de schema → CAPTCHA (Turnstile) → rate limit por IP → deduplicação, todas
-  camadas antes de qualquer e-mail sair (detalhes em "Formulário de
-  contato").
-- **Esteira de segurança automatizada em cada push** — CodeQL (SAST), OWASP
-  ZAP (DAST), Gitleaks + scanner local de segredos, `pnpm audit` +
-  Dependabot (detalhes em "Segurança").
-- **Decisões de arquitetura documentadas, não só código** — cada escolha não
-  óbvia (Server Action vs. API route, KV vs. Durable Object, duplicação de
-  headers entre Worker e assets estáticos) está registrada com o porquê, não
-  só o quê (ver "Arquitetura").
+· `@opennextjs/cloudflare`
 
 ## Rodando localmente
 
@@ -63,100 +43,85 @@ pnpm deploy      # build + deploy para Cloudflare Workers
 - `src/lib/language-context.tsx` — contexto de idioma (`LanguageProvider` +
   `useLanguage`)
 - `src/lib/contact-schema.ts` — validação e sanitização do formulário
-- `src/lib/turnstile.ts` — verificação server-side do CAPTCHA (Cloudflare
-  Turnstile)
-- `src/lib/rate-limit.ts` — limite de envios por IP e deduplicação de
-  submissões idênticas, via Cloudflare KV
+- `src/lib/turnstile.ts` — verificação server-side do CAPTCHA (Turnstile)
+- `src/lib/rate-limit.ts` — rate limit por IP e deduplicação de submissões,
+  via Cloudflare KV
 - `src/lib/email.ts` — envio da notificação de contato via Resend
-- `src/types/cloudflare-env-secrets.d.ts` — tipagem dos secrets do Worker que
+- `src/types/cloudflare-env-secrets.d.ts` — tipos dos secrets do Worker que
   não aparecem no `wrangler.jsonc` (ver "Configuração no Cloudflare")
-- `wrangler.jsonc` / `open-next.config.ts` — build, bindings e deploy no
-  Cloudflare
-- `public/_headers` — headers de segurança para os assets estáticos servidos
-  direto pelo binding `ASSETS` do Cloudflare (ver nota de arquitetura abaixo)
+- `wrangler.jsonc` / `open-next.config.ts` — build, bindings e deploy
+- `public/_headers` — headers de segurança dos assets servidos direto pelo
+  binding `ASSETS` do Cloudflare (ver "Arquitetura")
 - `scripts/check-secrets.mjs` — scanner de segredos do pre-commit
 
-## Arquitetura — decisões que valem uma nota
+## Arquitetura
 
-- **Server Action, não API route** — o formulário é o único consumidor;
-  uma rota `/api/contact` separada não teria benefício.
-- **Server vs. Client Components** — como o idioma é decidido no cliente
-  (sem roteamento por locale), todo componente que exibe texto do site
+- **Server Action, não API route** — o formulário é o único consumidor; uma
+  rota `/api/contact` separada não teria benefício.
+- **Server vs. Client Components** — o idioma é decidido no cliente (sem
+  roteamento por locale), então todo componente que exibe texto do site
   (`Hero`, `StackSection`, `ProjectsSection`, `Footer`, `ContactSection`)
-  precisa ser Client Component para reagir à troca de idioma. `Header`,
-  `CodeWindow` e `IconRain` continuam Server Component.
+  precisa ser Client Component. `Header`, `CodeWindow` e `IconRain`
+  continuam Server Component.
 - **Cores como taxonomia** — as custom properties de cor em `globals.css`
   (`--accent-cloud`, `--accent-lang` etc.) identificam categorias inteiras,
   reaproveitadas entre `StackSection`, o painel `whoami --focus` do Hero e o
-  `IconRain`. Adicionar uma categoria nova exige tocar três arquivos
-  (variável de cor, ícone em `icons.tsx`, entrada em `CATEGORY_META`).
-- **Tema e idioma via `data-theme`/`data-lang` + `localStorage`** — sem
-  `next-themes` ou `next-intl`. Um script inline em `layout.tsx` aplica a
-  preferência salva antes da hidratação, evitando flash do tema/idioma
-  errado. Limitação aceita: a metadata da página (`<title>`, `og:*`) fica
-  fixa em português, já que é resolvida no servidor antes de qualquer
-  preferência de cliente existir.
-- **OpenNext, não `@cloudflare/next-on-pages`** — o site usa Server Actions,
-  que o adapter mais antigo da Cloudflare não suporta bem.
-- **Headers de segurança duplicados (`next.config.ts` + `public/_headers`)**
-  — no Cloudflare, a página estática e os arquivos em `_next/static/*` são
-  servidos direto pelo binding `ASSETS`, sem passar pelo Worker. Isso significa
-  que `headers()` do `next.config.ts` nunca chega nessas respostas em produção;
-  só afeta `next dev`/`next start`. `public/_headers` (convenção do Cloudflare)
-  é a fonte real dos headers no site publicado; o `next.config.ts` existe só
-  para manter paridade em desenvolvimento.
-- **Resend em vez de SMTP** — a API HTTP da Resend funciona nativamente no
-  runtime de Workers (uma chamada `fetch`, sem socket TCP nem SDK Node-only).
-  Free tier cobre o volume esperado de um formulário de contato pessoal.
-- **Rate limit e deduplicação via Cloudflare KV, não Durable Object** — KV é
+  `IconRain`. Categoria nova = três arquivos (variável de cor, ícone em
+  `icons.tsx`, entrada em `CATEGORY_META`).
+- **Tema e idioma via `data-theme`/`data-lang` + `localStorage`**, sem
+  `next-themes` nem `next-intl`. Um script inline em `layout.tsx` aplica a
+  preferência salva antes da hidratação. Limitação aceita: `<title>` e
+  `og:*` ficam fixos em português, por serem resolvidos no servidor antes de
+  qualquer preferência de cliente existir.
+- **OpenNext, não `@cloudflare/next-on-pages`** — Server Actions não são bem
+  suportadas pelo adapter mais antigo.
+- **Headers duplicados em `next.config.ts` e `public/_headers`** — no
+  Cloudflare, a página estática e `_next/static/*` são servidos direto pelo
+  binding `ASSETS`, sem passar pelo Worker, então `headers()` do
+  `next.config.ts` só vale em `next dev`/`next start`. `public/_headers` é a
+  fonte real dos headers em produção.
+- **Resend em vez de SMTP** — API HTTP, funciona direto no runtime de
+  Workers (um `fetch`, sem socket TCP nem SDK Node-only).
+- **Rate limit e deduplicação via KV, não Durable Object** — KV é
   eventualmente consistente, então não é um limite atômico sob concorrência
-  real na mesma janela de tempo; para um formulário de contato pessoal isso é
-  suficiente e evita a complexidade de um Durable Object.
+  real. Suficiente para um formulário de contato pessoal; um Durable Object
+  seria mais infraestrutura do que o problema pede.
 - **CI/CD em estágios** — `quality` (lint, typecheck, audit, build) e
-  `secrets-scan` (Gitleaks) rodam em todo push/PR sem precisar de secret;
-  `deploy` só dispara em push para `main` e só depois que os dois passam;
-  `dast` roda depois do deploy, contra o site já publicado (ver "Segurança").
+  `secrets-scan` (Gitleaks) rodam em todo push/PR; `deploy` só dispara em
+  push para `main` depois que os dois passam; `dast` roda depois do deploy,
+  contra o site já publicado.
 
 ## Formulário de contato
 
-Fluxo de uma submissão, na ordem em que cada camada pode rejeitá-la:
+Ordem em que uma submissão pode ser rejeitada:
 
 1. **Honeypot** (`website`) — campo invisível fora da ordem de tab; se vier
-   preenchido, a submissão é descartada silenciosamente (sucesso falso para
-   o bot, sem consumir as camadas abaixo).
-2. **Validação de schema** (`contact-schema.ts`) — nome, e-mail e tamanho da
-   mensagem, com sanitização de espaços.
-3. **CAPTCHA** (`turnstile.ts`) — o token do widget Cloudflare Turnstile é
-   verificado no servidor contra a API da Cloudflare antes de qualquer envio.
-4. **Rate limit por IP** (`rate-limit.ts`) — máximo de 5 submissões por IP a
-   cada hora, contado em Cloudflare KV.
-5. **Deduplicação** (`rate-limit.ts`) — um hash de IP + e-mail + mensagem é
-   guardado por 5 minutos; reenvios idênticos nesse intervalo (duplo clique,
-   retry de rede) são aceitos para o usuário mas não disparam um segundo
-   e-mail.
-6. **Envio** (`email.ts`) — notificação por e-mail via Resend para
-   `contato.lucasmarquesdev@gmail.com`, com `reply_to` apontando para o
-   remetente.
+   preenchido, sucesso falso pro bot, sem consumir as camadas abaixo.
+2. **Validação de schema** (`contact-schema.ts`) — nome, e-mail, tamanho da
+   mensagem, sanitização de espaços.
+3. **CAPTCHA** (`turnstile.ts`) — token do Turnstile verificado no servidor
+   contra a API da Cloudflare antes de qualquer envio.
+4. **Rate limit por IP** (`rate-limit.ts`) — máximo de 5 submissões por hora,
+   contado em KV.
+5. **Deduplicação** (`rate-limit.ts`) — hash de IP + e-mail + mensagem
+   guardado por 5 minutos; reenvio idêntico nesse intervalo (duplo clique,
+   retry) responde sucesso mas não dispara um segundo e-mail.
+6. **Envio** (`email.ts`) — Resend, para `contato.lucasmarquesdev@gmail.com`,
+   com `reply_to` apontando para o remetente.
 
-Nenhum dado é persistido em banco — o único registro que sobrevive é o log
-do Worker (e-mail, nome e tamanho da mensagem, nunca o conteúdo).
+Nada é persistido em banco; o log do Worker (e-mail, nome, tamanho da
+mensagem, nunca o conteúdo) é o único registro.
 
 ## Segurança
 
 - CSP restritivo em `next.config.ts` (`default-src 'self'`, `X-Frame-Options:
   DENY`, `Permissions-Policy` sem câmera/microfone/geolocalização).
-  `'unsafe-eval'` em `script-src` existe só em desenvolvimento. `'unsafe-inline'`
-  em `script-src`/`style-src` é permanente (exigido pelo script de tema/idioma
-  e pelas cores aplicadas via `style={{ color }}`) — sem nonce. `challenges.
-  cloudflare.com` é liberado em `script-src`/`connect-src`/`frame-src`
-  exclusivamente para o widget do Turnstile.
-- Formulário de contato: honeypot, CAPTCHA, validação só no servidor
-  (`noValidate` no form, regras reais em `contact-schema.ts`), rate limit e
-  deduplicação por IP (ver "Formulário de contato" acima).
-- Sem autenticação e sem banco de dados — a superfície de ataque real do
-  site é o formulário de contato e a integração com Resend/Turnstile.
-
-**Automação de segurança:**
+  `'unsafe-eval'` só em desenvolvimento. `'unsafe-inline'` em
+  `script-src`/`style-src` é permanente (script de tema/idioma e cores via
+  `style={{ color }}`) — sem nonce. `challenges.cloudflare.com` liberado só
+  para o widget do Turnstile.
+- Sem autenticação, sem banco de dados — a superfície de ataque real é o
+  formulário de contato e as integrações com Resend/Turnstile.
 
 | Camada | Ferramenta | Quando roda |
 | --- | --- | --- |
@@ -171,8 +136,7 @@ nenhum dos dois bloqueia o deploy.
 
 ## Configuração no Cloudflare
 
-Além do binding `ASSETS`, o Worker precisa de um namespace KV e dois secrets
-para o formulário de contato funcionar em produção:
+Além do binding `ASSETS`, o Worker usa um namespace KV e dois secrets:
 
 ```bash
 # 1. Criar o namespace KV e colar o id retornado em wrangler.jsonc
@@ -186,14 +150,13 @@ wrangler secret put TURNSTILE_SECRET_KEY
 pnpm cf-typegen
 ```
 
-- `RESEND_API_KEY` — gerada em [resend.com](https://resend.com); o remetente
-  por padrão é o domínio de teste `onboarding@resend.dev` (zero configuração
-  de DNS). Para enviar como `contato@lucasgms.dev`, verifique o domínio no
-  painel da Resend e ajuste `CONTACT_FROM` em `src/lib/email.ts`.
+- `RESEND_API_KEY` — de [resend.com](https://resend.com); remetente padrão é
+  o domínio de teste `onboarding@resend.dev` (zero DNS). Pra enviar como
+  `contato@lucasgms.dev`, verifique o domínio na Resend e ajuste
+  `CONTACT_FROM` em `src/lib/email.ts`.
 - `TURNSTILE_SECRET_KEY` — gerada ao criar um widget em Cloudflare →
-  Turnstile. A *site key* correspondente (pública por natureza) fica
-  hardcoded em `src/lib/turnstile.ts` como `TURNSTILE_SITE_KEY`, atrelada ao
-  domínio do widget criado no dashboard.
+  Turnstile. A *site key* correspondente (pública) fica hardcoded em
+  `src/lib/turnstile.ts`.
 
 ## CI/CD — secrets necessários
 
@@ -202,9 +165,9 @@ Para o job `deploy` (GitHub → Settings → Secrets and variables → Actions):
 - `CLOUDFLARE_API_TOKEN` — token com permissão de editar Workers
 - `CLOUDFLARE_ACCOUNT_ID` — ID da conta Cloudflare
 
-O job `quality` não usa nenhum secret. Os secrets de runtime do formulário
+O job `quality` não usa secret. Os secrets de runtime do formulário
 (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`) vivem no Worker, não no GitHub
-Actions — ver "Configuração no Cloudflare".
+Actions.
 
 ## Qualidade
 
@@ -214,11 +177,6 @@ Pre-commit (`simple-git-hooks` + `lint-staged`, instalado no `pnpm install`):
 - `scripts/check-secrets.mjs` em todo arquivo staged
 - `tsc --noEmit` (projeto inteiro)
 
-Sem suíte de testes automatizados — decisão de escopo, não lacuna
-esquecida: a única lógica de negócio real é o pipeline de contato
-(`contact-schema.ts` + `rate-limit.ts` + `turnstile.ts` + `email.ts`), hoje
-coberta por `tsc --noEmit` a cada commit e validação manual do fluxo antes
-de cada mudança. Se essa lógica crescer, o próximo passo natural é testes
-unitários para `contact-schema.ts` e `rate-limit.ts` — são as duas peças
-com regras (limites, formatos, janelas de tempo) fáceis de quebrar sem
-notar.
+Sem suíte de testes automatizados. A única lógica com regras que valem
+teste é o pipeline de contato (`contact-schema.ts`, `rate-limit.ts`) — se
+crescer, é o primeiro lugar pra cobrir com testes unitários.
