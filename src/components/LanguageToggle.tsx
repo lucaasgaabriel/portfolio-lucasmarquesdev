@@ -10,14 +10,20 @@ export function LanguageToggle({ emphasized = false }: { emphasized?: boolean })
       type="button"
       onClick={toggleLang}
       aria-label={lang === "pt" ? "Switch to English" : "Mudar para português"}
-      className={`flex items-center justify-center gap-1.5 rounded-sm border border-border transition-all duration-300 hover:border-accent sm:w-auto sm:px-2 ${
-        emphasized ? "h-9 w-9 text-base" : "h-8 w-8 text-sm"
+      className={`flex w-auto items-center justify-center gap-1.5 rounded-sm border border-border px-2 transition-all duration-300 hover:border-accent ${
+        emphasized ? "h-9 text-base" : "h-8 text-sm"
       }`}
     >
-      <span aria-hidden className={lang === "pt" ? "inline" : "hidden"}>
+      <span
+        aria-hidden
+        className={lang === "en" ? "opacity-100" : "opacity-35"}
+      >
         🇺🇸
       </span>
-      <span aria-hidden className={lang === "en" ? "inline" : "hidden"}>
+      <span
+        aria-hidden
+        className={lang === "pt" ? "opacity-100" : "opacity-35"}
+      >
         🇧🇷
       </span>
     </button>
