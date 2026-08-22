@@ -11,5 +11,8 @@
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
-	}
+	},
+	"kv_namespaces": [
+		{ "binding": "CONTACT_KV", "id": "e8cd58ee159c4c13815296d963a5ab4e" }
+	]
 }
