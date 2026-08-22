@@ -1,9 +1,11 @@
 "use client";
 
+import Script from "next/script";
 import { useActionState } from "react";
 import { submitContact, type ContactState } from "@/app/actions/contact";
 import { CodeWindow } from "@/components/CodeWindow";
 import { useLanguage } from "@/lib/language-context";
+import { TURNSTILE_SITE_KEY } from "@/lib/turnstile";
 
 const initialState: ContactState = { status: "idle" };
 
@@ -65,6 +67,12 @@ export function ContactSection() {
           </div>
 
           <CodeWindow title="contact.ts">
+            <Script
+              src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+              strategy="afterInteractive"
+              async
+              defer
+            />
             <form action={formAction} noValidate className="space-y-5">
               <input type="hidden" name="lang" value={lang} />
 
@@ -137,6 +145,12 @@ export function ContactSection() {
                 />
                 <FieldError message={state.fieldErrors?.message} />
               </div>
+
+              <div
+                className="cf-turnstile"
+                data-sitekey={TURNSTILE_SITE_KEY}
+                data-language={lang === "pt" ? "pt-br" : "en"}
+              />
 
               {state.status === "success" && state.message && (
                 <p role="status" className="text-sm text-accent">
