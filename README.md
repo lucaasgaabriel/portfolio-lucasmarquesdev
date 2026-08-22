@@ -72,14 +72,12 @@ pnpm deploy      # build + deploy para Cloudflare Workers
   servidos direto pelo binding `ASSETS`, sem passar pelo Worker. Isso significa
   que `headers()` do `next.config.ts` nunca chega nessas respostas em produção;
   só afeta `next dev`/`next start`. `public/_headers` (convenção do Cloudflare)
-  é a fonte real dos headers no site publicado; o `next.config.ts` existe para
-  manter paridade em desenvolvimento. Achado via DAST (ZAP) — sem ele, HSTS,
-  Permissions-Policy e Cross-Origin-Embedder-Policy simplesmente não existiam
-  na resposta real do site.
+  é a fonte real dos headers no site publicado; o `next.config.ts` existe só
+  para manter paridade em desenvolvimento.
 - **CI/CD em estágios** — `quality` (lint, typecheck, audit, build) e
   `secrets-scan` (Gitleaks) rodam em todo push/PR sem precisar de secret;
   `deploy` só dispara em push para `main` e só depois que os dois passam;
-  `dast` roda depois do deploy, contra o site já publicado.
+  `dast` roda depois do deploy, contra o site já publicado (ver "Segurança").
 
 ## Segurança
 
@@ -91,51 +89,25 @@ pnpm deploy      # build + deploy para Cloudflare Workers
 - Formulário de contato: honeypot (`website`, `sr-only` + fora da ordem de
   tab), validação só no servidor (`noValidate` no form, regras reais em
   `contact-schema.ts`), log minimizado (e-mail, nome e tamanho da mensagem,
-  não o conteúdo).
-- **O formulário não envia e-mail nem persiste nada** — a única forma de
-  saber que alguém escreveu é olhar o log do Worker. Isso é uma lacuna
-  funcional, não só de segurança.
-- Sem rate limiting e sem CAPTCHA/Turnstile no formulário — aceitável hoje
-  porque a única consequência de spam é poluir um log; deixaria de ser
-  aceitável se o formulário passasse a disparar algo com custo.
-- `scripts/check-secrets.mjs` é um scanner de padrões conhecidos (chaves AWS,
-  tokens, blocos de chave privada) que roda localmente via git hook, sobre os
-  arquivos staged. Em CI, o job `secrets-scan` roda Gitleaks sobre o histórico
-  completo do repositório a cada push/PR — cobertura mais ampla (entropia,
-  regras da comunidade), como camada extra e não substituto do hook local.
-- `pnpm audit --audit-level=high` roda no job `quality` do CI a cada push/PR
-  (sem vulnerabilidades conhecidas no momento em que isso foi escrito, mas
-  isso só vale para esse instante). Dependabot está ativo para atualizações
-  de segurança e para PRs semanais de dependências (`.github/dependabot.yml`).
-- CodeQL (SAST) roda em todo push/PR e semanalmente, com os resultados na aba
-  Security do repositório — não bloqueia o deploy, é uma camada de revisão.
-- OWASP ZAP baseline (DAST) roda depois de cada deploy bem-sucedido, contra
-  `https://lucasgms.dev` — relatório informativo, não bloqueia nada porque o
-  deploy já aconteceu quando ele roda.
-- Sem autenticação, sem banco de dados — a superfície de ataque real é só o
-  formulário de contato.
+  não o conteúdo). Sem rate limiting nem CAPTCHA/Turnstile — aceitável
+  enquanto a única consequência de spam é poluir um log de texto.
+- O formulário não envia e-mail nem persiste dados; o log do Worker é a
+  única forma de ver o que foi enviado.
+- Sem autenticação e sem banco de dados — a superfície de ataque real do
+  site é só esse formulário.
 
-### Achados do primeiro DAST e o que foi feito
+**Automação de segurança:**
 
-- **HSTS, Permissions-Policy e Cross-Origin-Embedder-Policy ausentes** —
-  causa raiz era estrutural (ver nota sobre `public/_headers` acima), não os
-  valores em si. Corrigido: os três headers agora chegam de fato na resposta,
-  via `public/_headers`. `Cross-Origin-Opener-Policy: same-origin` foi
-  adicionado junto, como o par usual de `Cross-Origin-Embedder-Policy`.
-  `Cross-Origin-Embedder-Policy: require-corp` só é seguro aqui porque a
-  única imagem cross-origin do site (avatar do GitHub) já responde com
-  `Cross-Origin-Resource-Policy: cross-origin` — confirmado antes de habilitar.
-- **CSP `script-src unsafe-inline`** — mantido como risco aceito, já
-  documentado acima (exigido pelo script de tema/idioma inline).
-- **Ausência de anti-CSRF token no formulário** — falso positivo do
-  scanner genérico: a Server Action do Next.js já valida a origem da
-  requisição no nível do framework, sem precisar de um token custom.
-- **"User Controllable HTML Element Attribute" (potencial XSS)** — revisado:
-  o site não reflete nenhum parâmetro de URL ou input do usuário em atributos
-  HTML (conteúdo é 100% estático, vindo de `content.ts`); tratado como falso
-  positivo do scanner heurístico.
-- **"Storable and Cacheable Content"** — aceito: não há dado sensível ou
-  por-usuário em nenhuma resposta do site para vazar via cache.
+| Camada | Ferramenta | Quando roda |
+| --- | --- | --- |
+| Segredos (staged) | `scripts/check-secrets.mjs` (git hook) | pre-commit |
+| Segredos (histórico completo) | Gitleaks (`secrets-scan`) | todo push/PR |
+| Dependências | `pnpm audit --audit-level=high` + Dependabot | todo push/PR + semanal |
+| SAST | CodeQL | todo push/PR + semanal |
+| DAST | OWASP ZAP baseline contra `https://lucasgms.dev` | após cada deploy |
+
+CodeQL e ZAP são informativos (resultados na aba Security do repositório);
+nenhum dos dois bloqueia o deploy.
 
 ## CI/CD — secrets necessários
 

@@ -14,20 +14,10 @@ export function LanguageToggle({ emphasized = false }: { emphasized?: boolean })
         emphasized ? "h-9 w-9 text-base" : "h-8 w-8 text-sm"
       }`}
     >
-      <span
-        aria-hidden
-        className={`${lang === "pt" ? "inline" : "hidden"} sm:inline ${
-          lang === "en" ? "sm:opacity-100" : "sm:opacity-35"
-        }`}
-      >
+      <span aria-hidden className={lang === "pt" ? "inline" : "hidden"}>
         🇺🇸
       </span>
-      <span
-        aria-hidden
-        className={`${lang === "en" ? "inline" : "hidden"} sm:inline ${
-          lang === "pt" ? "sm:opacity-100" : "sm:opacity-35"
-        }`}
-      >
+      <span aria-hidden className={lang === "en" ? "inline" : "hidden"}>
         🇧🇷
       </span>
     </button>
