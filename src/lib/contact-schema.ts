@@ -1,4 +1,6 @@
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// WHATWG HTML spec's email regex (same one browsers use for <input type="email">).
+const EMAIL_PATTERN =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
 const MAX_NAME = 80;
 const MAX_EMAIL = 254;
 const MAX_MESSAGE = 2000;

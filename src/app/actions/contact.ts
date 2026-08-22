@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { validateContactPayload } from "@/lib/contact-schema";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { guardContactSubmission } from "@/lib/rate-limit";
+import { checkRateLimit, fingerprintSubmission, markSent, wasAlreadySent } from "@/lib/rate-limit";
 import { sendContactEmail } from "@/lib/email";
 
 export type ContactState = {
@@ -58,10 +58,10 @@ export async function submitContact(
   }
 
   const requestHeaders = await headers();
-  const ip =
-    requestHeaders.get("cf-connecting-ip") ??
-    requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "unknown";
+  // cf-connecting-ip is set by Cloudflare's edge and can't be spoofed by the
+  // client; unlike x-forwarded-for, it isn't a header the caller controls,
+  // so there's no fallback to it here.
+  const ip = requestHeaders.get("cf-connecting-ip") ?? "unknown";
 
   const { env } = await getCloudflareContext();
 
@@ -69,28 +69,29 @@ export async function submitContact(
   const captchaOk = await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, ip);
 
   if (!captchaOk) {
+    console.warn("[contact] captcha rejected", { ip });
     return { status: "error", message: c.captcha };
   }
 
-  const guard = await guardContactSubmission(env.CONTACT_KV, {
-    ip,
-    email: result.data.email,
-    message: result.data.message,
-  });
+  const rateOk = await checkRateLimit(env.CONTACT_KV, ip);
 
-  if (!guard.allowed) {
+  if (!rateOk) {
+    console.warn("[contact] rate limited", { ip });
     return { status: "error", message: c.rateLimited };
   }
+
+  const fingerprint = await fingerprintSubmission(ip, result.data.email, result.data.message);
+  const duplicate = await wasAlreadySent(env.CONTACT_KV, fingerprint);
 
   console.info("[contact]", {
     at: new Date().toISOString(),
     from: result.data.email,
     name: result.data.name,
     length: result.data.message.length,
-    duplicate: guard.duplicate,
+    duplicate,
   });
 
-  if (!guard.duplicate) {
+  if (!duplicate) {
     const sent = await sendContactEmail({
       apiKey: env.RESEND_API_KEY,
       name: result.data.name,
@@ -101,6 +102,8 @@ export async function submitContact(
     if (!sent) {
       return { status: "error", message: c.sendFailed };
     }
+
+    await markSent(env.CONTACT_KV, fingerprint);
   }
 
   return {
