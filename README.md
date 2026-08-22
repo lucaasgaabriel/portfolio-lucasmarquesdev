@@ -1,12 +1,35 @@
 # lucasgms.dev
 
-Landing page pessoal de Lucas Marques — DevSecOps / Engenharia de Software,
-Dados & IA. Site de uma única rota, sem CMS e sem banco de dados: conteúdo
-bilíngue (PT/EN) versionado em código, formulário de contato com proteção
-anti-abuso e envio de e-mail via API, publicado em Cloudflare Workers.
+[![CI/CD](https://github.com/lucaasgaabriel/portfolio-lucasmarquesdev/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/lucaasgaabriel/portfolio-lucasmarquesdev/actions/workflows/ci-cd.yml)
+
+**[lucasgms.dev](https://lucasgms.dev)** — landing page pessoal de Lucas
+Marques (DevSecOps / Engenharia de Software, Dados & IA).
+
+Não é uma vitrine estática: é publicado como um serviço de produção de
+verdade, com pipeline de CI/CD em estágios, formulário de contato com defesa
+em profundidade contra abuso e uma esteira de segurança automatizada (SAST,
+DAST, scanner de segredos, auditoria de dependências) rodando a cada push.
 
 **Stack:** Next.js 16.3 (App Router) · React 19 · TypeScript · Tailwind CSS v4
-· pnpm · `@opennextjs/cloudflare`
+· Cloudflare Workers (`@opennextjs/cloudflare`)
+
+## Destaques técnicos
+
+- **Zero backend tradicional** — sem CMS, sem banco de dados. Conteúdo
+  bilíngue (PT/EN) versionado em código, formulário de contato via Server
+  Action, e-mail via Resend, tudo publicado como um único Worker na borda da
+  Cloudflare.
+- **Defesa em profundidade no formulário de contato** — honeypot → validação
+  de schema → CAPTCHA (Turnstile) → rate limit por IP → deduplicação, todas
+  camadas antes de qualquer e-mail sair (detalhes em "Formulário de
+  contato").
+- **Esteira de segurança automatizada em cada push** — CodeQL (SAST), OWASP
+  ZAP (DAST), Gitleaks + scanner local de segredos, `pnpm audit` +
+  Dependabot (detalhes em "Segurança").
+- **Decisões de arquitetura documentadas, não só código** — cada escolha não
+  óbvia (Server Action vs. API route, KV vs. Durable Object, duplicação de
+  headers entre Worker e assets estáticos) está registrada com o porquê, não
+  só o quê (ver "Arquitetura").
 
 ## Rodando localmente
 
@@ -191,4 +214,11 @@ Pre-commit (`simple-git-hooks` + `lint-staged`, instalado no `pnpm install`):
 - `scripts/check-secrets.mjs` em todo arquivo staged
 - `tsc --noEmit` (projeto inteiro)
 
-Não há suíte de testes automatizados hoje.
+Sem suíte de testes automatizados — decisão de escopo, não lacuna
+esquecida: a única lógica de negócio real é o pipeline de contato
+(`contact-schema.ts` + `rate-limit.ts` + `turnstile.ts` + `email.ts`), hoje
+coberta por `tsc --noEmit` a cada commit e validação manual do fluxo antes
+de cada mudança. Se essa lógica crescer, o próximo passo natural é testes
+unitários para `contact-schema.ts` e `rate-limit.ts` — são as duas peças
+com regras (limites, formatos, janelas de tempo) fáceis de quebrar sem
+notar.
