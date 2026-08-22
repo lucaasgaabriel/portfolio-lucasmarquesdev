@@ -11,28 +11,6 @@ limit + envio via Resend, deploy em Cloudflare Workers.
 **Stack:** Next.js 16.3 (App Router) · React 19 · TypeScript · Tailwind CSS v4
 · `@opennextjs/cloudflare`
 
-## Rodando localmente
-
-Requer pnpm (versão fixada via `packageManager` em `package.json`).
-
-```bash
-pnpm install
-pnpm dev
-```
-
-Abra [http://localhost:3000](http://localhost:3000).
-
-```bash
-pnpm build       # build de produção
-pnpm start       # serve o build de produção
-pnpm lint        # eslint
-pnpm typecheck   # tsc --noEmit
-pnpm preview     # build + preview local via Wrangler
-pnpm deploy      # build + deploy para Cloudflare Workers
-```
-
-`pnpm install` também instala os git hooks de pre-commit (ver "Qualidade").
-
 ## Estrutura
 
 - `src/app` — layout raiz, página única, ícone/favicon gerado (`icon.tsx`) e
@@ -47,8 +25,9 @@ pnpm deploy      # build + deploy para Cloudflare Workers
 - `src/lib/rate-limit.ts` — rate limit por IP e deduplicação de submissões,
   via Cloudflare KV
 - `src/lib/email.ts` — envio da notificação de contato via Resend
-- `src/types/cloudflare-env-secrets.d.ts` — tipos dos secrets do Worker que
-  não aparecem no `wrangler.jsonc` (ver "Configuração no Cloudflare")
+- `src/types/cloudflare-env-secrets.d.ts` — tipos dos secrets do Worker
+  (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`) que não aparecem no
+  `wrangler.jsonc` por serem configurados via `wrangler secret put`
 - `wrangler.jsonc` / `open-next.config.ts` — build, bindings e deploy
 - `public/_headers` — headers de segurança dos assets servidos direto pelo
   binding `ASSETS` do Cloudflare (ver "Arquitetura")
@@ -86,10 +65,10 @@ pnpm deploy      # build + deploy para Cloudflare Workers
   eventualmente consistente, então não é um limite atômico sob concorrência
   real. Suficiente para um formulário de contato pessoal; um Durable Object
   seria mais infraestrutura do que o problema pede.
-- **CI/CD em estágios** — `quality` (lint, typecheck, audit, build) e
-  `secrets-scan` (Gitleaks) rodam em todo push/PR; `deploy` só dispara em
-  push para `main` depois que os dois passam; `dast` roda depois do deploy,
-  contra o site já publicado.
+- **CI/CD em estágios, todos bloqueantes** — `quality`, `secrets-scan` e
+  `codeql` rodam em todo push/PR; `dast` builda o Worker e escaneia o
+  preview local (`wrangler dev`) com OWASP ZAP; `deploy` só dispara em push
+  para `main`, depois que os quatro passam.
 
 ## Formulário de contato
 
@@ -128,46 +107,8 @@ mensagem, nunca o conteúdo) é o único registro.
 | Segredos (staged) | `scripts/check-secrets.mjs` (git hook) | pre-commit |
 | Segredos (histórico completo) | Gitleaks (`secrets-scan`) | todo push/PR |
 | Dependências | `pnpm audit --audit-level=high` + Dependabot | todo push/PR + semanal |
-| SAST | CodeQL | todo push/PR + semanal |
-| DAST | OWASP ZAP baseline contra `https://lucasgms.dev` | após cada deploy |
-
-CodeQL e ZAP são informativos (resultados na aba Security do repositório);
-nenhum dos dois bloqueia o deploy.
-
-## Configuração no Cloudflare
-
-Além do binding `ASSETS`, o Worker usa um namespace KV e dois secrets:
-
-```bash
-# 1. Criar o namespace KV e colar o id retornado em wrangler.jsonc
-wrangler kv namespace create CONTACT_KV
-
-# 2. Configurar os secrets (nunca em wrangler.jsonc ou .env)
-wrangler secret put RESEND_API_KEY
-wrangler secret put TURNSTILE_SECRET_KEY
-
-# 3. Regenerar os tipos do binding de KV
-pnpm cf-typegen
-```
-
-- `RESEND_API_KEY` — de [resend.com](https://resend.com); remetente padrão é
-  o domínio de teste `onboarding@resend.dev` (zero DNS). Pra enviar como
-  `contato@lucasgms.dev`, verifique o domínio na Resend e ajuste
-  `CONTACT_FROM` em `src/lib/email.ts`.
-- `TURNSTILE_SECRET_KEY` — gerada ao criar um widget em Cloudflare →
-  Turnstile. A *site key* correspondente (pública) fica hardcoded em
-  `src/lib/turnstile.ts`.
-
-## CI/CD — secrets necessários
-
-Para o job `deploy` (GitHub → Settings → Secrets and variables → Actions):
-
-- `CLOUDFLARE_API_TOKEN` — token com permissão de editar Workers
-- `CLOUDFLARE_ACCOUNT_ID` — ID da conta Cloudflare
-
-O job `quality` não usa secret. Os secrets de runtime do formulário
-(`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`) vivem no Worker, não no GitHub
-Actions.
+| SAST | CodeQL | todo push/PR (bloqueia deploy) + scan semanal agendado |
+| DAST | OWASP ZAP baseline contra o Worker buildado localmente | todo push/PR (bloqueia deploy) |
 
 ## Qualidade
 
